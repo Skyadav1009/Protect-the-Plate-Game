@@ -192,7 +192,7 @@ export default function Game() {
                   <div className="w-4 h-10 bg-lime-500 rounded-full animate-bounce" />
                 </div>
                 <h1 className="text-3xl font-black text-slate-800 mb-2 tracking-tight">
-                  SAVE THE<br /><span className="text-lime-600">PLATE</span>
+                  PROTECT THE<br /><span className="text-lime-600">PLATE</span>
                 </h1>
                 <p className="text-slate-500 mb-2 font-medium">Tap the mucus before it ruins dinner!</p>
                 <p className="text-xs text-slate-400 mb-6">Level {progress.level} · XP {progress.xp}/{xpForLevel(progress.level + 1)}</p>

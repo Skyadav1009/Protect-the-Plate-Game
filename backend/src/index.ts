@@ -33,7 +33,7 @@ app.get('/api/health', (_req, res) => {
 // Connect to MongoDB then start server
 connectDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`🎮 Save the Plate API running on http://localhost:${PORT}`);
+        console.log(`🎮 Protect the Plate API running on http://localhost:${PORT}`);
         console.log(`   Health: http://localhost:${PORT}/api/health`);
     });
 });

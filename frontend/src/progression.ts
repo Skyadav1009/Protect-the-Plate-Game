@@ -1,7 +1,7 @@
 import type { PlayerProgress, DropType } from './types';
 import { LEVEL_UNLOCKS, XP_PER_LEVEL_MULT } from './constants';
 
-const STORAGE_KEY = 'save-the-plate-progress';
+const STORAGE_KEY = 'protect-the-plate-progress';
 
 export function loadProgress(): PlayerProgress {
     try {

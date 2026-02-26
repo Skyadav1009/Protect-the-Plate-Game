@@ -30,7 +30,7 @@ export const Score = mongoose.model('Score', scoreSchema);
 // ── Connect ──
 
 export async function connectDB(): Promise<void> {
-  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/save-the-plate';
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/protect-the-plate';
   try {
     await mongoose.connect(uri);
     console.log('✅ MongoDB connected:', uri);

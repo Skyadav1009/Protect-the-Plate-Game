@@ -1,5 +1,5 @@
-const API_BASE = '/api';
-const PLAYER_ID_KEY = 'save-the-plate-player-id';
+const API_BASE = 'https://protect-the-plate-game.onrender.com/api';
+const PLAYER_ID_KEY = 'protect-the-plate-player-id';
 
 // ── Player ID management ──
 export function getPlayerId(): string {
