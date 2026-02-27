@@ -1,9 +1,25 @@
-export type GameState = 'MENU' | 'MODE_SELECT' | 'PLAYING' | 'GAME_OVER';
+export type GameState = 'MENU' | 'MODE_SELECT' | 'PLAYING' | 'GAME_OVER' | 'LEADERBOARD' | 'SKINS' | 'PROFILE';
 export type GameMode = 'CLASSIC' | 'TIME_ATTACK' | 'SURVIVAL' | 'CHALLENGE';
 export type DropType = 'NORMAL' | 'FAST' | 'STICKY' | 'INFECTION';
 export type PowerUpType = 'TISSUE' | 'SHIELD' | 'FREEZE' | 'EXTRA_HEART';
 export type WeatherType = 'NONE' | 'COLD' | 'DUST';
 export type FaceExpression = 'NEUTRAL' | 'ANGRY' | 'HAPPY' | 'SNEEZE';
+export type SkinCategory = 'plate' | 'nose' | 'background';
+
+export interface Skin {
+  id: string;
+  name: string;
+  category: SkinCategory;
+  emoji: string;
+  unlockType: 'level' | 'score' | 'games' | 'default';
+  unlockValue: number;
+  unlockMode?: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    accent?: string;
+  };
+}
 
 export interface Drop {
   id: number;
@@ -100,6 +116,13 @@ export interface PlayerProgress {
   xp: number;
   highScores: Record<string, number>;
   challengesCompleted: string[];
+  unlockedSkins: string[];
+  equippedSkins: {
+    plate: string;
+    nose: string;
+    background: string;
+  };
+  totalGamesPlayed: number;
 }
 
 export interface GameRef {
@@ -131,4 +154,9 @@ export interface GameRef {
   levelUpDisplay: LevelUpDisplay;
   idCounter: number;
   survivalSpeedTimer: number;
+  equippedSkins: {
+    plate: string;
+    nose: string;
+    background: string;
+  };
 }

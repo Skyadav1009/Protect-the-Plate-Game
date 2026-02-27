@@ -23,10 +23,10 @@ export const DROP_CONFIGS: Record<DropType, {
     color: string; glowColor: string; speedMult: number;
     baseClicks: number; points: number; hearts: number; label: string;
 }> = {
-    NORMAL: { color: '#84cc16', glowColor: '#bef264', speedMult: 1.0, baseClicks: 5, points: 1, hearts: 1, label: '🟢' },
+    NORMAL: { color: '#84cc16', glowColor: '#bef264', speedMult: 1.0, baseClicks: 3, points: 1, hearts: 1, label: '🟢' },
     FAST: { color: '#3b82f6', glowColor: '#93c5fd', speedMult: 2.0, baseClicks: 3, points: 2, hearts: 1, label: '🔵' },
-    STICKY: { color: '#eab308', glowColor: '#fde047', speedMult: 0.7, baseClicks: 8, points: 1, hearts: 1, label: '🟡' },
-    INFECTION: { color: '#ef4444', glowColor: '#fca5a5', speedMult: 1.5, baseClicks: 5, points: 3, hearts: 2, label: '🔴' },
+    STICKY: { color: '#eab308', glowColor: '#fde047', speedMult: 0.7, baseClicks: 3, points: 1, hearts: 1, label: '🟡' },
+    INFECTION: { color: '#ef4444', glowColor: '#fca5a5', speedMult: 1.5, baseClicks: 3, points: 3, hearts: 2, label: '🔴' },
 };
 
 export const COMBO_TIERS = [
@@ -69,11 +69,19 @@ export const BOSS_UNLOCK_LEVEL = 20;
 export const XP_PER_LEVEL_MULT = 10;
 
 export const DIFFICULTY_TIERS = [
-    { score: 0, baseSpeed: 2.0, extraClicks: 0 },
-    { score: 10, baseSpeed: 3.0, extraClicks: 1 },
-    { score: 20, baseSpeed: 4.0, extraClicks: 2 },
-    { score: 30, baseSpeed: 5.0, extraClicks: 3 },
-    { score: 50, baseSpeed: 6.0, extraClicks: 5 },
+    { score: 0, baseSpeed: 1.5, extraClicks: 0 },
+    { score: 5, baseSpeed: 1.6, extraClicks: 0 },
+    { score: 10, baseSpeed: 1.7, extraClicks: 0 },
+    { score: 15, baseSpeed: 1.8, extraClicks: 0 },
+    { score: 20, baseSpeed: 1.9, extraClicks: 0 },
+    { score: 25, baseSpeed: 2.0, extraClicks: 0 },
+    { score: 30, baseSpeed: 2.1, extraClicks: 0 },
+    { score: 40, baseSpeed: 2.2, extraClicks: 0 },
+    { score: 50, baseSpeed: 2.3, extraClicks: 0 },
+    { score: 60, baseSpeed: 2.4, extraClicks: 0 },
+    { score: 75, baseSpeed: 2.5, extraClicks: 0 },
+    { score: 100, baseSpeed: 2.7, extraClicks: 0 },
+    { score: 150, baseSpeed: 3.0, extraClicks: 0 },
 ];
 
 export const CHALLENGES: Omit<Challenge, 'progress' | 'completed'>[] = [
@@ -89,3 +97,87 @@ export const POWERUP_TYPES = [
     { type: 'FREEZE' as const, emoji: '❄️', label: 'Freeze', color: '#7dd3fc' },
     { type: 'EXTRA_HEART' as const, emoji: '❤️', label: 'Extra Heart', color: '#f87171' },
 ];
+
+// ── SKINS SYSTEM ──
+export const SKINS = {
+    // Plate skins
+    plate_classic: {
+        id: 'plate_classic', name: 'Classic Plate', category: 'plate' as const, emoji: '🍽️',
+        unlockType: 'default' as const, unlockValue: 0,
+        colors: { primary: '#ffffff', secondary: '#94a3b8', accent: '#cbd5e1' }
+    },
+    plate_gold: {
+        id: 'plate_gold', name: 'Golden Plate', category: 'plate' as const, emoji: '🥇',
+        unlockType: 'level' as const, unlockValue: 10,
+        colors: { primary: '#fbbf24', secondary: '#d97706', accent: '#fde047' }
+    },
+    plate_neon: {
+        id: 'plate_neon', name: 'Neon Plate', category: 'plate' as const, emoji: '💫',
+        unlockType: 'score' as const, unlockValue: 100, unlockMode: 'CLASSIC',
+        colors: { primary: '#a855f7', secondary: '#7c3aed', accent: '#c084fc' }
+    },
+    plate_ice: {
+        id: 'plate_ice', name: 'Ice Plate', category: 'plate' as const, emoji: '❄️',
+        unlockType: 'score' as const, unlockValue: 50, unlockMode: 'SURVIVAL',
+        colors: { primary: '#7dd3fc', secondary: '#0ea5e9', accent: '#bae6fd' }
+    },
+    plate_fire: {
+        id: 'plate_fire', name: 'Fire Plate', category: 'plate' as const, emoji: '🔥',
+        unlockType: 'games' as const, unlockValue: 50,
+        colors: { primary: '#f97316', secondary: '#dc2626', accent: '#fbbf24' }
+    },
+
+    // Nose skins
+    nose_classic: {
+        id: 'nose_classic', name: 'Classic Nose', category: 'nose' as const, emoji: '👃',
+        unlockType: 'default' as const, unlockValue: 0,
+        colors: { primary: '#fca5a5', secondary: '#f87171', accent: '#7f1d1d' }
+    },
+    nose_piggy: {
+        id: 'nose_piggy', name: 'Piggy Nose', category: 'nose' as const, emoji: '🐷',
+        unlockType: 'level' as const, unlockValue: 5,
+        colors: { primary: '#f9a8d4', secondary: '#ec4899', accent: '#be185d' }
+    },
+    nose_alien: {
+        id: 'nose_alien', name: 'Alien Nose', category: 'nose' as const, emoji: '👽',
+        unlockType: 'level' as const, unlockValue: 15,
+        colors: { primary: '#86efac', secondary: '#22c55e', accent: '#166534' }
+    },
+    nose_robot: {
+        id: 'nose_robot', name: 'Robot Nose', category: 'nose' as const, emoji: '🤖',
+        unlockType: 'score' as const, unlockValue: 75, unlockMode: 'TIME_ATTACK',
+        colors: { primary: '#94a3b8', secondary: '#64748b', accent: '#1e293b' }
+    },
+    nose_clown: {
+        id: 'nose_clown', name: 'Clown Nose', category: 'nose' as const, emoji: '🤡',
+        unlockType: 'games' as const, unlockValue: 25,
+        colors: { primary: '#ef4444', secondary: '#dc2626', accent: '#7f1d1d' }
+    },
+
+    // Background skins
+    bg_cream: {
+        id: 'bg_cream', name: 'Cream', category: 'background' as const, emoji: '🌾',
+        unlockType: 'default' as const, unlockValue: 0,
+        colors: { primary: '#fefce8', secondary: '#fef9c3' }
+    },
+    bg_night: {
+        id: 'bg_night', name: 'Night Mode', category: 'background' as const, emoji: '🌙',
+        unlockType: 'level' as const, unlockValue: 8,
+        colors: { primary: '#1e293b', secondary: '#0f172a' }
+    },
+    bg_ocean: {
+        id: 'bg_ocean', name: 'Ocean', category: 'background' as const, emoji: '🌊',
+        unlockType: 'level' as const, unlockValue: 12,
+        colors: { primary: '#0ea5e9', secondary: '#0284c7' }
+    },
+    bg_sunset: {
+        id: 'bg_sunset', name: 'Sunset', category: 'background' as const, emoji: '🌅',
+        unlockType: 'score' as const, unlockValue: 150, unlockMode: 'CLASSIC',
+        colors: { primary: '#fb923c', secondary: '#f97316' }
+    },
+    bg_galaxy: {
+        id: 'bg_galaxy', name: 'Galaxy', category: 'background' as const, emoji: '🌌',
+        unlockType: 'games' as const, unlockValue: 100,
+        colors: { primary: '#581c87', secondary: '#3b0764' }
+    },
+};

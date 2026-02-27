@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, RotateCcw, Trophy, Heart, Timer, Star } from 'lucide-react';
+import { Play, RotateCcw, Trophy, Heart, Timer, Star, Sparkles, User } from 'lucide-react';
 import type { GameState, GameMode, GameRef, Challenge, PlayerProgress } from '../types';
 import { GAME } from '../constants';
 import { initAudio } from '../audio';
 import { drawGame } from '../renderer';
 import { createGameRef, spawnDrop, updateGame, handleTap, UpdateCallbacks } from '../engine';
-import { loadProgress, saveProgress, updateHighScore, xpForLevel } from '../progression';
-import { submitScore, getHighScores, type HighScoreEntry } from '../api';
+import { loadProgress, saveProgress, updateHighScore, xpForLevel, incrementGamesPlayed } from '../progression';
+import { submitScore, getHighScores, getCachedNickname, type HighScoreEntry } from '../api';
 import ModeSelect from './ModeSelect';
+import Leaderboard from './Leaderboard';
+import Skins from './Skins';
+import Profile from './Profile';
 
 export default function Game() {
   const [gameState, setGameState] = useState<GameState>('MENU');
@@ -64,6 +67,9 @@ export default function Game() {
   const startGame = useCallback((mode: GameMode, challenge?: Challenge) => {
     initAudio();
     const p = progressRef.current;
+    incrementGamesPlayed(p);
+    saveProgress(p);
+    setProgress({ ...p });
     const ref = createGameRef(mode, p, challenge);
     stateRef.current = ref;
     setScore(0);
@@ -187,7 +193,15 @@ export default function Game() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               className="absolute inset-0 bg-black/40 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-10">
               <motion.div initial={{ scale: 0.8, y: 20 }} animate={{ scale: 1, y: 0 }}
-                className="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full border-4 border-lime-500">
+                className="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full border-4 border-lime-500 relative">
+                {/* Profile button */}
+                <button 
+                  onClick={() => setGameState('PROFILE')}
+                  className="absolute top-4 right-4 w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center transition-colors"
+                >
+                  <User size={20} className="text-slate-600" />
+                </button>
+
                 <div className="w-20 h-20 bg-lime-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-lime-500">
                   <div className="w-4 h-10 bg-lime-500 rounded-full animate-bounce" />
                 </div>
@@ -195,11 +209,24 @@ export default function Game() {
                   PROTECT THE<br /><span className="text-lime-600">PLATE</span>
                 </h1>
                 <p className="text-slate-500 mb-2 font-medium">Tap the mucus before it ruins dinner!</p>
+                {getCachedNickname() && (
+                  <p className="text-sm text-lime-600 font-bold mb-1">👋 {getCachedNickname()}</p>
+                )}
                 <p className="text-xs text-slate-400 mb-6">Level {progress.level} · XP {progress.xp}/{xpForLevel(progress.level + 1)}</p>
                 <button onClick={() => setGameState('MODE_SELECT')}
                   className="w-full bg-lime-500 hover:bg-lime-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg shadow-lime-500/30 transition-transform active:scale-95 flex items-center justify-center gap-2">
                   <Play fill="currentColor" /> PLAY NOW
                 </button>
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => setGameState('LEADERBOARD')}
+                    className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold text-base py-3 rounded-xl shadow-lg shadow-amber-500/30 transition-transform active:scale-95 flex items-center justify-center gap-2">
+                    <Trophy size={18} /> Ranks
+                  </button>
+                  <button onClick={() => setGameState('SKINS')}
+                    className="flex-1 bg-purple-500 hover:bg-purple-600 text-white font-bold text-base py-3 rounded-xl shadow-lg shadow-purple-500/30 transition-transform active:scale-95 flex items-center justify-center gap-2">
+                    <Sparkles size={18} /> Skins
+                  </button>
+                </div>
               </motion.div>
             </motion.div>
           )}
@@ -210,6 +237,22 @@ export default function Game() {
               onBack={() => setGameState('MENU')}
               progress={progress}
             />
+          )}
+
+          {gameState === 'LEADERBOARD' && (
+            <Leaderboard onBack={() => setGameState('MENU')} />
+          )}
+
+          {gameState === 'SKINS' && (
+            <Skins
+              progress={progress}
+              onBack={() => setGameState('MENU')}
+              onProgressUpdate={(p) => setProgress(p)}
+            />
+          )}
+
+          {gameState === 'PROFILE' && (
+            <Profile onBack={() => setGameState('MENU')} />
           )}
 
           {gameState === 'GAME_OVER' && (

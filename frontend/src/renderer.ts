@@ -1,11 +1,29 @@
 import type { GameRef, Drop, Particle, FaceExpression } from './types';
-import { GAME, POWERUP_TYPES } from './constants';
+import { GAME, POWERUP_TYPES, SKINS } from './constants';
 
 const TAU = Math.PI * 2;
 
+function getSkinColors(skinId: string, category: 'plate' | 'nose' | 'background') {
+    const skin = SKINS[skinId as keyof typeof SKINS];
+    if (skin && skin.category === category) return skin.colors;
+    // Default colors
+    const defaults = {
+        plate: { primary: '#ffffff', secondary: '#94a3b8', accent: '#cbd5e1' },
+        nose: { primary: '#fca5a5', secondary: '#f87171', accent: '#7f1d1d' },
+        background: { primary: '#fefce8', secondary: '#fef9c3' },
+    };
+    return defaults[category];
+}
+
 export function drawGame(ctx: CanvasRenderingContext2D, ref: GameRef): void {
     const W = GAME.WIDTH, H = GAME.HEIGHT;
-    ctx.fillStyle = '#fefce8';
+    
+    // Background with skin
+    const bgColors = getSkinColors(ref.equippedSkins.background, 'background');
+    const gradient = ctx.createLinearGradient(0, 0, 0, H);
+    gradient.addColorStop(0, bgColors.primary);
+    gradient.addColorStop(1, bgColors.secondary);
+    ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, W, H);
 
     const sx = (Math.random() - 0.5) * ref.shake;
@@ -40,11 +58,13 @@ export function drawGame(ctx: CanvasRenderingContext2D, ref: GameRef): void {
 function drawNose(ctx: CanvasRenderingContext2D, ref: GameRef): void {
     const cx = GAME.WIDTH / 2, ny = GAME.NOSE_Y;
     const isB = ref.boss.active;
-    ctx.fillStyle = isB ? '#ef4444' : '#fca5a5';
+    const noseColors = getSkinColors(ref.equippedSkins.nose, 'nose');
+    
+    ctx.fillStyle = isB ? '#ef4444' : noseColors.primary;
     ctx.beginPath();
     ctx.ellipse(cx, ny, GAME.NOSE_WIDTH / 2, GAME.NOSE_HEIGHT / 2, 0, 0, TAU);
     ctx.fill();
-    ctx.strokeStyle = isB ? '#b91c1c' : '#f87171';
+    ctx.strokeStyle = isB ? '#b91c1c' : noseColors.secondary;
     ctx.lineWidth = 4;
     ctx.stroke();
 
@@ -59,7 +79,7 @@ function drawNose(ctx: CanvasRenderingContext2D, ref: GameRef): void {
         ctx.restore();
     }
 
-    ctx.fillStyle = '#7f1d1d';
+    ctx.fillStyle = noseColors.accent || '#7f1d1d';
     ctx.beginPath();
     ctx.ellipse(cx - GAME.NOSTRIL_OFFSET_X, ny + GAME.NOSTRIL_Y_OFFSET, 15, 25, 0, 0, TAU);
     ctx.fill();
@@ -67,21 +87,22 @@ function drawNose(ctx: CanvasRenderingContext2D, ref: GameRef): void {
     ctx.ellipse(cx + GAME.NOSTRIL_OFFSET_X, ny + GAME.NOSTRIL_Y_OFFSET, 15, 25, 0, 0, TAU);
     ctx.fill();
 
-    drawExpression(ctx, ref.expression, cx, ny);
+    drawExpression(ctx, ref.expression, cx, ny, noseColors);
 }
 
-function drawExpression(ctx: CanvasRenderingContext2D, expr: FaceExpression, cx: number, ny: number): void {
+function drawExpression(ctx: CanvasRenderingContext2D, expr: FaceExpression, cx: number, ny: number, noseColors: { primary: string; secondary: string; accent?: string }): void {
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
+    const accentColor = noseColors.accent || '#7f1d1d';
     if (expr === 'ANGRY') {
-        ctx.strokeStyle = '#7f1d1d';
+        ctx.strokeStyle = accentColor;
         ctx.beginPath(); ctx.moveTo(cx - 60, ny - 55); ctx.lineTo(cx - 30, ny - 45); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(cx + 60, ny - 55); ctx.lineTo(cx + 30, ny - 45); ctx.stroke();
     } else if (expr === 'HAPPY') {
-        ctx.strokeStyle = '#f87171';
+        ctx.strokeStyle = noseColors.secondary;
         ctx.beginPath(); ctx.arc(cx, ny + 60, 30, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
     } else if (expr === 'SNEEZE') {
-        ctx.strokeStyle = '#7f1d1d';
+        ctx.strokeStyle = accentColor;
         ctx.beginPath(); ctx.moveTo(cx - 50, ny - 45); ctx.lineTo(cx - 25, ny - 50); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(cx + 50, ny - 45); ctx.lineTo(cx + 25, ny - 50); ctx.stroke();
         ctx.beginPath();
@@ -95,6 +116,7 @@ function drawExpression(ctx: CanvasRenderingContext2D, expr: FaceExpression, cx:
 function drawPlate(ctx: CanvasRenderingContext2D, ref: GameRef): void {
     const cx = GAME.WIDTH / 2, py = GAME.PLATE_Y + 20;
     const hasShield = ref.activePowerUps.some(p => p.type === 'SHIELD');
+    const plateColors = getSkinColors(ref.equippedSkins.plate, 'plate');
 
     if (hasShield) {
         ctx.save();
@@ -108,17 +130,17 @@ function drawPlate(ctx: CanvasRenderingContext2D, ref: GameRef): void {
         ctx.restore();
     }
 
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = plateColors.primary;
     ctx.beginPath();
     ctx.ellipse(cx, py, GAME.PLATE_WIDTH / 2, GAME.PLATE_HEIGHT / 2, 0, 0, TAU);
     ctx.fill();
-    ctx.strokeStyle = '#94a3b8';
+    ctx.strokeStyle = plateColors.secondary;
     ctx.lineWidth = 4;
     ctx.stroke();
 
     ctx.beginPath();
     ctx.ellipse(cx, py, GAME.PLATE_WIDTH / 2 - 20, GAME.PLATE_HEIGHT / 2 - 10, 0, 0, TAU);
-    ctx.strokeStyle = '#cbd5e1';
+    ctx.strokeStyle = plateColors.accent || plateColors.secondary;
     ctx.stroke();
 
     if (ref.lives > 0) {

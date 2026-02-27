@@ -49,6 +49,32 @@ export interface PlayerStats {
     total_play_time: number;
 }
 
+export interface PlayerInfo {
+    id: string;
+    nickname: string;
+    createdAt: string;
+    lastSeenAt: string;
+}
+
+export interface RecentGame {
+    _id: string;
+    mode: string;
+    score: number;
+    dropsWiped: number;
+    maxCombo: number;
+    level: number;
+    durationSeconds: number;
+    createdAt: string;
+}
+
+export interface PlayerProfile {
+    player: PlayerInfo;
+    stats: PlayerStats;
+    highScores: HighScoreEntry[];
+    ranks: Record<string, number>;
+    recentGames: RecentGame[];
+}
+
 export interface SubmitScorePayload {
     mode: string;
     score: number;
@@ -94,6 +120,12 @@ export async function getLeaderboard(mode: string): Promise<{ leaderboard: Leade
     return apiFetch(`/leaderboard/${mode}`);
 }
 
+export type GlobalLeaderboard = Record<string, LeaderboardEntry[]>;
+
+export async function getGlobalLeaderboard(): Promise<{ leaderboard: GlobalLeaderboard }> {
+    return apiFetch('/leaderboard');
+}
+
 export async function ensurePlayer(): Promise<void> {
     const playerId = getPlayerId();
     try {
@@ -105,4 +137,29 @@ export async function ensurePlayer(): Promise<void> {
         });
         // Store the new ID if the server created a different one
     }
+}
+
+// ── Profile API ──
+
+export async function getProfile(): Promise<PlayerProfile> {
+    const playerId = getPlayerId();
+    return apiFetch(`/profile/${playerId}`);
+}
+
+export async function updateNickname(nickname: string): Promise<{ player: PlayerInfo }> {
+    const playerId = getPlayerId();
+    return apiFetch(`/players/${playerId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ nickname }),
+    });
+}
+
+const NICKNAME_KEY = 'protect-the-plate-nickname';
+
+export function getCachedNickname(): string {
+    return localStorage.getItem(NICKNAME_KEY) || '';
+}
+
+export function setCachedNickname(nickname: string): void {
+    localStorage.setItem(NICKNAME_KEY, nickname);
 }

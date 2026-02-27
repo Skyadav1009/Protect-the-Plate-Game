@@ -31,6 +31,7 @@ export function createGameRef(mode: GameMode, progress: PlayerProgress, challeng
         sneezeCooldown: SNEEZE_COOLDOWN, bossTriggered: false,
         levelUpDisplay: { show: false, level: 0, unlock: '', timer: 0 },
         idCounter: 1, survivalSpeedTimer: 0,
+        equippedSkins: progress.equippedSkins,
     };
 }
 
